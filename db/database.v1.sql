@@ -6,6 +6,7 @@ CREATE TABLE users (
     id INT(11) NOT NULL AUTO_INCREMENT,
     username VARCHAR(45) DEFAULT NULL,
     password VARCHAR(60) DEFAULT NULL,
+    email VARCHAR(60) DEFAULT NULL,
     PRIMARY KEY (id)
 );
 
@@ -21,5 +22,7 @@ INSERT INTO user VALUES
 SELECT * FROM users;
 
 SELECT * FROM users WHERE username = ?
+
+delete from users where email='andres@gmail.com';
 
 DROP TABLE users;  

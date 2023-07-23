@@ -2,52 +2,74 @@ import { pool } from "../db.js";
 import bcrypt from "bcryptjs";
 
 export const regiterUser = async (req, res) => {
-  const { username, password } = req.body;
-  const usernameLower = username.toLowerCase().trim();
+  const { username, password, email } = req.body;
   try {
+    if(!username.replace(/\s+/g, "") || !password || !email.replace(/\s+/g, "")){
+      return res.status(400).json({
+        status: 400,
+        data: `Hay campos vacios`,
+      });
+    }
+    
+    const usernameLower = username.toLowerCase().replace(/\s+/g, "");
+    const emailLower = email.toLowerCase().replace(/\s+/g, "");
     let passwordHash = await bcrypt.hash(password, 8);
-    const dbResponse = await pool.query(
-      "SELECT * FROM users WHERE username = ?",
-      [usernameLower]
-    );
 
-    console.log(dbResponse)
+    const dbResponse = await pool.query("SELECT * FROM users WHERE email = ?", [
+      emailLower,
+    ]);
+
     if (dbResponse[0].length > 0)
       return res.status(400).json({
         status: 400,
-        data: "El nombre de usuario ya existe",
+        data: `Email: ${emailLower}, ya existe`,
       });
 
     const result = await pool.query("INSERT INTO users SET ?", {
-      username: usernameLower.trim(),
+      username: usernameLower,
       password: passwordHash,
+      email: emailLower,
     });
     res.json({
       status: 200,
-      data:{
+      data: {
         id: result[0].insertId,
-        username: usernameLower.trim()
-      }
+        username: usernameLower,
+        email: emailLower,
+      },
     });
   } catch (error) {
-    return res.status(500).json({ 
+    return res.status(500).json({
       status: 500,
-      data: 'Error en el servidor'
-   });
+      data: "Error en el servidor",
+    });
   }
 };
 
 export const loginUser = async (req, res) => {
-  const { username, password } = req.body;
-  const usernameLower = username.toLowerCase().trim();
+  const { email, password } = req.body;
+  let comparePassword = false;
   try {
-    const dbResponse = await pool.query(
-      "SELECT * FROM users WHERE username = ?",
-      [usernameLower]
-    );
+    if(!password.replace(/\s+/g, "") || !email.replace(/\s+/g, "")){
+      return res.status(400).json({
+        status: 400,
+        data: `Hay campos vacios`,
+      });
+    }
 
-    const comparePassword = await bcrypt.compare(password, dbResponse[0][0].password || 'no-existe');
-    console.log(comparePassword)
+    const emailLower = email.toLowerCase().replace(/\s+/g, "");
+
+    const dbResponse = await pool.query("SELECT * FROM users WHERE email = ?", [
+      emailLower,
+    ]);
+
+    if (dbResponse[0][0]?.password) {
+      comparePassword = await bcrypt.compare(
+        password,
+        dbResponse[0][0].password
+      );
+    }
+
     if (dbResponse.length === 0 || !comparePassword)
       return res.status(400).json({
         status: 400,
@@ -56,14 +78,15 @@ export const loginUser = async (req, res) => {
     res.json({
       status: 200,
       data: {
-        username
-      }
+        username: dbResponse[0][0].username,
+        email: emailLower,
+      },
     });
   } catch (error) {
-    console.log(error)
-    return res.status(500).json({ 
+    console.log(error);
+    return res.status(500).json({
       status: 500,
-      data: 'Error en el servidor'
-   });
+      data: "Error en el servidor",
+    });
   }
 };
