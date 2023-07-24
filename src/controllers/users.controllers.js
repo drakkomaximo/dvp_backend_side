@@ -5,12 +5,13 @@ export const searchUsersByName = async (req, res) => {
   const { userName } = req.params;
 
   try {
-    const response = await axiosInstance.get(`/search/users?q=${userName}`);
+    const response = await axiosInstance.get(`/search/users?q=${userName}&page=1&per_page=10`);
     res.status(200).json({ 
         status: 200,
-        data: {...response.data}
+        data: {...response.data }
      });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ 
         status: 500,
         data: 'Error en el servidor'
@@ -82,7 +83,6 @@ export const selectUserByName = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: 500,
       data: "Error en el servidor",
@@ -110,7 +110,6 @@ export const getSelectedUsersById = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: 500,
       data: "Error en el servidor",
