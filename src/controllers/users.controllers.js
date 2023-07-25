@@ -15,7 +15,7 @@ export const searchUsersByName = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      data: "Error en el servidor",
+      data: "Server Error",
     });
   }
 };
@@ -31,16 +31,16 @@ export const getUserByName = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      data: "Error en el servidor",
+      data: "Server Error",
     });
   }
 };
 
-export const getNumberOfFollowersByUsersNames = async (req, res) => {
+export const getNumberOfFollowersByUsernames = async (req, res) => {
   const { users } = req.params;
   try {
-    const formatedUsers = users.split(',')
-    const listOfFollowers = await Promise.all(formatedUsers.map(async (user) => {
+    const formattedUsers = users.split(',')
+    const listOfFollowers = await Promise.all(formattedUsers.map(async (user) => {
       try {
         const response = await axiosInstance.get(`/users/${user}`);
         if (response.data.followers >= 0 && response.data.login) {
@@ -69,7 +69,7 @@ export const getNumberOfFollowersByUsersNames = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      data: "Error en el servidor",
+      data: "Server Error",
     });
   }
 };
@@ -83,7 +83,7 @@ export const getSelectedUsersById = async (req, res) => {
     );
 
     if (dbResponse[0].length > 0) {
-      const formatedResponse = dbResponse[0].map((user) => ({
+      const formattedResponse = dbResponse[0].map((user) => ({
         user_avatar: user.user_avatar,
         user_id: user.user_id,
         user_name: user.user_name,
@@ -91,7 +91,7 @@ export const getSelectedUsersById = async (req, res) => {
       }));
       res.json({
         status: 200,
-        data: formatedResponse,
+        data: formattedResponse,
       });
     } else {
       res.json({
@@ -102,7 +102,7 @@ export const getSelectedUsersById = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      data: "Error en el servidor",
+      data: "Server Error",
     });
   }
 };
@@ -124,7 +124,7 @@ export const selectUserByName = async (req, res) => {
       if (result[0].length > 0) {
         return res.status(200).json({
           status: 200,
-          data: `El usuario seleccionado ya se encuentra en la lista`,
+          data: `The selected user is already in the list.`,
         });
       }
 
@@ -143,8 +143,11 @@ export const selectUserByName = async (req, res) => {
         user_name: username,
       });
     } else {
+
+      const dbLength = await pool.query("SELECT * FROM accounts")
+
       const result = await pool.query("INSERT INTO accounts SET ?", {
-        account_name: `chamo${id}`,
+        account_name: `auto_account_${dbLength[0].length + 1}`,
       });
 
       await pool.query("INSERT INTO github_users_list SET ?", {
@@ -165,7 +168,7 @@ export const selectUserByName = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      data: "Error en el servidor",
+      data: "Server Error",
     });
   }
 };
@@ -186,7 +189,7 @@ export const deleteSelectUserByName = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      data: "Error en el servidor",
+      data: "Server Error",
     });
   }
 };
