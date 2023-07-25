@@ -13,6 +13,6 @@ router.get("/search/:userName", searchUsersByName);
 router.get("/user/:userName", getUserByName);
 router.get("/selected-users/:id", getSelectedUsersById);
 router.post("/select", selectUserByName);
-router.delete("/delete-user", deleteSelectUserByName);
+router.delete("/delete-user/:username", deleteSelectUserByName);
 
 export default router;

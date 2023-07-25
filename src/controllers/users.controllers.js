@@ -13,7 +13,6 @@ export const searchUsersByName = async (req, res) => {
       data: { ...response.data },
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: 500,
       data: "Error en el servidor",
@@ -30,7 +29,6 @@ export const getUserByName = async (req, res) => {
       data: { ...response.data },
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: 500,
       data: "Error en el servidor",
@@ -46,7 +44,6 @@ export const getSelectedUsersById = async (req, res) => {
       [id]
     );
 
-    console.log(dbResponse[0]);
     if (dbResponse[0].length > 0) {
       const formatedResponse = dbResponse[0].map((user) => ({
         user_avatar: user.user_avatar,
@@ -136,7 +133,7 @@ export const selectUserByName = async (req, res) => {
 };
 
 export const deleteSelectUserByName = async (req, res) => {
-  const { username } = req.body;
+  const { username } = req.params;
 
   try {
     await pool.query("DELETE FROM github_users_list WHERE user_name = ?", [
@@ -149,7 +146,6 @@ export const deleteSelectUserByName = async (req, res) => {
       user_name: username,
     });
   } catch (error) {
-    console.log(error)
     return res.status(500).json({
       status: 500,
       data: "Error en el servidor",
