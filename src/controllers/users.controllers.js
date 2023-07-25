@@ -36,7 +36,7 @@ export const getUserByName = async (req, res) => {
   }
 };
 
-export const getFollowerByNames = async (req, res) => {
+export const getNumberOfFollowersByUsersNames = async (req, res) => {
   const { users } = req.params;
   try {
     const formatedUsers = users.split(',')
