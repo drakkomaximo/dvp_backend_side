@@ -36,6 +36,44 @@ export const getUserByName = async (req, res) => {
   }
 };
 
+export const getFollowerByNames = async (req, res) => {
+  const { users } = req.params;
+  try {
+    const formatedUsers = users.split(',')
+    const listOfFollowers = await Promise.all(formatedUsers.map(async (user) => {
+      try {
+        const response = await axiosInstance.get(`/users/${user}`);
+        if (response.data.followers >= 0 && response.data.login) {
+          return {
+            followers: response.data.followers,
+            username: response.data.login,
+          };
+        } else {
+          return {
+            followers: 0,
+            username: 'No name',
+          };
+        }
+      } catch (error) {
+        return {
+          followers: 0,
+          username: 'No name',
+        };
+      }
+    }));
+
+    res.status(200).json({
+      status: 200,
+      data: listOfFollowers,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      data: "Error en el servidor",
+    });
+  }
+};
+
 export const getSelectedUsersById = async (req, res) => {
   const { id } = req.params;
   try {
