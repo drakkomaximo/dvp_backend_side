@@ -38,6 +38,40 @@ export const getUserByName = async (req, res) => {
   }
 };
 
+export const getSelectedUsersById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const dbResponse = await pool.query(
+      "SELECT * FROM github_users_list WHERE account_id = ?",
+      [id]
+    );
+
+    console.log(dbResponse[0]);
+    if (dbResponse[0].length > 0) {
+      const formatedResponse = dbResponse[0].map((user) => ({
+        user_avatar: user.user_avatar,
+        user_id: user.user_id,
+        user_name: user.user_name,
+        user_github_link: user.user_github_link,
+      }));
+      res.json({
+        status: 200,
+        data: formatedResponse,
+      });
+    } else {
+      res.json({
+        status: 200,
+        data: [],
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      data: "Error en el servidor",
+    });
+  }
+};
+
 export const selectUserByName = async (req, res) => {
   const { user, id } = req.body;
   const { avatar, userId, username, githubLink } = user;
@@ -71,7 +105,7 @@ export const selectUserByName = async (req, res) => {
         status: 200,
         data: "Selection has been saved",
         account_id: dbResponse[0][0]?.id,
-        user_name: username
+        user_name: username,
       });
     } else {
       const result = await pool.query("INSERT INTO accounts SET ?", {
@@ -90,7 +124,7 @@ export const selectUserByName = async (req, res) => {
         status: 200,
         data: "Selection has been saved",
         account_id: result[0].insertId,
-        user_name: username
+        user_name: username,
       });
     }
   } catch (error) {
@@ -101,33 +135,21 @@ export const selectUserByName = async (req, res) => {
   }
 };
 
-export const getSelectedUsersById = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const dbResponse = await pool.query(
-      "SELECT * FROM github_users_list WHERE account_id = ?",
-      [id]
-    );
+export const deleteSelectUserByName = async (req, res) => {
+  const { username } = req.body;
 
-    console.log(dbResponse[0]);
-    if (dbResponse[0].length > 0) {
-      const formatedResponse = dbResponse[0].map((user) => ({
-        user_avatar: user.user_avatar,
-        user_id: user.user_id,
-        user_name: user.user_name,
-        user_github_link: user.user_github_link,
-      }));
-      res.json({
-        status: 200,
-        data: formatedResponse,
-      });
-    } else {
-      res.json({
-        status: 200,
-        data: [],
-      });
-    }
+  try {
+    await pool.query("DELETE FROM github_users_list WHERE user_name = ?", [
+      username,
+    ]);
+
+    res.json({
+      status: 200,
+      data: "Selection has been deleted",
+      user_name: username,
+    });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
       status: 500,
       data: "Error en el servidor",

@@ -1,13 +1,18 @@
 import { Router } from "express";
-import { searchUsersByName, getUserByName, selectUserByName, getSelectedUsersById } from "../controllers/users.controllers.js";
+import {
+  searchUsersByName,
+  getUserByName,
+  selectUserByName,
+  getSelectedUsersById,
+  deleteSelectUserByName,
+} from "../controllers/users.controllers.js";
 
-const router = Router()
+const router = Router();
 
-router.get('/search/:userName', searchUsersByName)
-router.get('/user/:userName', getUserByName)
-router.get('/selected-users/:id', getSelectedUsersById)
-/* router.get('/users', getUsers) */
-/* router.delete('/users', deleteUsers) */
-router.post('/select', selectUserByName)
+router.get("/search/:userName", searchUsersByName);
+router.get("/user/:userName", getUserByName);
+router.get("/selected-users/:id", getSelectedUsersById);
+router.post("/select", selectUserByName);
+router.delete("/delete-user", deleteSelectUserByName);
 
-export default router
+export default router;
