@@ -9,7 +9,7 @@ export const axiosInstance = axios.create({
 
 axiosInstance.defaults.headers.common['Authorization'] = `token ${
   process.env.GITHUB_PERSONAL_TOKEN ||
-  "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"
+  "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"
 }`;
 
 export const PORT = process.env.PORT || 4000;

@@ -8,3 +8,13 @@ export const pool = createPool({
     port: DB_PORT,
     database: DB_DATABSE
 })
+
+pool
+  .getConnection()
+  .then((connection) => {
+    console.log("Conexión a la base de datos de MySQL establecida con éxito!");
+    connection.release();
+  })
+  .catch((error) => {
+    console.error("Error al conectar con la base de datos:", error.message);
+  });
