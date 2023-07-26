@@ -2,13 +2,13 @@
 CREATE DATABASE IF NOT EXISTS githubUsersdb;
 
 /* 2) Create table accounts */
-CREATE TABLE accounts (
+CREATE TABLE IF NOT EXISTS accounts (
     id INT PRIMARY KEY AUTO_INCREMENT,
     account_name VARCHAR(50)
 );
 
 /* 3) Create table github_users_list */
-CREATE TABLE github_users_list (
+CREATE TABLE IF NOT EXISTS github_users_list (
     id INT PRIMARY KEY AUTO_INCREMENT,
     account_id INT,
     user_name VARCHAR(100),
@@ -18,7 +18,7 @@ CREATE TABLE github_users_list (
     FOREIGN KEY (account_id) REFERENCES accounts(id)
 );
 
-/* Note: axuliar queries */
+/* ##Note: Auxiliary queries. */
 
 USE githubUsersdb;
 SELECT * FROM accounts;

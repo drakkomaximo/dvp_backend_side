@@ -39,28 +39,30 @@ export const getUserByName = async (req, res) => {
 export const getNumberOfFollowersByUsernames = async (req, res) => {
   const { users } = req.params;
   try {
-    const formattedUsers = users.split(',')
-    const listOfFollowers = await Promise.all(formattedUsers.map(async (user) => {
-      try {
-        const response = await axiosInstance.get(`/users/${user}`);
-        if (response.data.followers >= 0 && response.data.login) {
-          return {
-            followers: response.data.followers,
-            username: response.data.login,
-          };
-        } else {
+    const formattedUsers = users.split(",");
+    const listOfFollowers = await Promise.all(
+      formattedUsers.map(async (user) => {
+        try {
+          const response = await axiosInstance.get(`/users/${user}`);
+          if (response.data.followers >= 0 && response.data.login) {
+            return {
+              followers: response.data.followers,
+              username: response.data.login,
+            };
+          } else {
+            return {
+              followers: 0,
+              username: "No name",
+            };
+          }
+        } catch (error) {
           return {
             followers: 0,
-            username: 'No name',
+            username: "No name",
           };
         }
-      } catch (error) {
-        return {
-          followers: 0,
-          username: 'No name',
-        };
-      }
-    }));
+      })
+    );
 
     res.status(200).json({
       status: 200,
@@ -143,8 +145,7 @@ export const selectUserByName = async (req, res) => {
         user_name: username,
       });
     } else {
-
-      const dbLength = await pool.query("SELECT * FROM accounts")
+      const dbLength = await pool.query("SELECT * FROM accounts");
 
       const result = await pool.query("INSERT INTO accounts SET ?", {
         account_name: `auto_account_${dbLength[0].length + 1}`,

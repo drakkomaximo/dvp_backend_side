@@ -1,0 +1,32 @@
+version: '3.8'
+
+networks:
+  my_network:
+    driver: bridge
+
+services:
+  mysqldb:
+    networks:
+      - my_network
+    image: mysql:latest
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQLDB_DATABASE
+    restart: always
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    volumes:
+      - ./wait-for-mysql.sh:/wait-for-mysql.sh
+    command: /wait-for-mysql.sh mysqldb:3307 -- npm start
+    
+  app:
+    build: .
+    depends_on:
+      - mysqldb
+    networks:
+      - my_network
+    links:
+      - mysqldb
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
