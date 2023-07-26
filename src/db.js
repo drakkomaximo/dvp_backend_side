@@ -12,9 +12,9 @@ export const pool = createPool({
 pool
   .getConnection()
   .then((connection) => {
-    console.log("Conexión a la base de datos de MySQL establecida con éxito!");
+    console.log("Connection to the MySQL database established successfully!");
     connection.release();
   })
   .catch((error) => {
-    console.error("Error al conectar con la base de datos:", error.message);
+    console.error("Error connecting to the database:", error.message);
   });
